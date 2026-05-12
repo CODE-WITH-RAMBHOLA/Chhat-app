@@ -126,16 +126,16 @@ const Header = () => {
 	return (
 		<div
 			id="header"
-			className="w-full h-16 fixed top-0 z-50 md:h-20 shadow-lg shadow-cyan-500/10 flex justify-between items-center p-4 font-semibold bg-[#0F172A]/80 backdrop-blur-xl text-white border-b border-slate-700/60"
+			className="w-full h-16 md:h-20 flex justify-between items-center p-4 font-semibold bg-[#110F18] text-white border-b border-[#1C1A28] sticky top-0 z-50"
 		>
-			<div className="flex items-center justify-start gap-2">
+			<div className="flex items-center justify-start gap-3 ml-2">
 				<Link to={"/"}>
-					<div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-lg hover:shadow-purple-500/50 transition-all duration-300">
-						<FaComments fontSize={24} className="text-white" />
+					<div className="h-10 w-10 rounded-[10px] bg-[#8B5CF6] flex items-center justify-center text-white font-bold text-lg">
+						C
 					</div>
 				</Link>
 				<Link to={"/"}>
-					<span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">ChatApp</span>
+					<span className="text-xl font-medium tracking-wide">ChatApp</span>
 				</Link>
 			</div>
 

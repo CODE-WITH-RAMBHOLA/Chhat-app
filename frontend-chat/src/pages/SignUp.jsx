@@ -94,7 +94,8 @@ const SignUp = () => {
 				email: user.email,
 				firstName: fName || "User",
 				lastName: lName,
-				image: user.photoURL
+				image: user.photoURL,
+				action: "signup"
 			};
 
 			// Send to our backend to get JWT token

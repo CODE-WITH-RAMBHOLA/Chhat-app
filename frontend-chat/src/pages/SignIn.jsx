@@ -91,7 +91,8 @@ const SignIn = () => {
 				email: user.email,
 				firstName: firstName || "User",
 				lastName: lastName,
-				image: user.photoURL
+				image: user.photoURL,
+				action: "login"
 			};
 
 			// Send to our backend to get JWT token
