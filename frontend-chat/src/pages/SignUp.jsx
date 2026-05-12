@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { checkValidSignUpFrom } from "../utils/validate";
 import { PiEye, PiEyeClosedLight } from "react-icons/pi";
+import { FaGoogle, FaGithub, FaComments } from "react-icons/fa";
 
 const SignUp = () => {
 	const [firstName, setFirstName] = useState("");
@@ -14,7 +15,6 @@ const SignUp = () => {
 	const navigate = useNavigate();
 
 	const signUpUser = (e) => {
-		// Signup ---
 		toast.loading("Wait until you SignUp");
 		e.target.disabled = true;
 		fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
@@ -36,19 +36,20 @@ const SignUp = () => {
 				toast.dismiss();
 				if (json.token) {
 					navigate("/signin");
-					toast.success(json?.message);
+					toast.success(json?.message || "SignUp Successful");
 				} else {
-					toast.error(json?.message);
+					toast.error(json?.message || "SignUp Failed");
 				}
 			})
 			.catch((error) => {
 				console.error("Error:", error);
 				setLoad("");
 				toast.dismiss();
-				toast.error("Error : " + error.code);
+				toast.error("Error : " + (error.message || "Connection Failed"));
 				e.target.disabled = false;
 			});
 	};
+
 	const handleSignup = (e) => {
 		if (firstName && lastName && email && password) {
 			const validError = checkValidSignUpFrom(
@@ -110,11 +111,6 @@ const SignUp = () => {
 					toast.dismiss();
 					if (json.token) {
 						localStorage.setItem("token", json.token);
-						// For signup we might just navigate to signin or login automatically
-						// Since backend social returns a token, we can log them in directly
-						const { useDispatch } = require("react-redux");
-						const { addAuth } = require("../redux/slices/authSlice");
-						// We can't use hooks here, so just navigate to signin, which will redirect if token exists
 						toast.success(json?.message || `${providerName} SignUp Successful`);
 						window.location.href = "/";
 					} else {
@@ -135,90 +131,153 @@ const SignUp = () => {
 			toast.error(error.message || `${providerName} signup failed`);
 		}
 	};
+
 	return (
-		<div className="flex flex-col items-center my-6 text-slate-300 min-h-[80vh]">
-			<div className="p-6 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[40%] min-w-72 max-w-[1000px] border border-purple-500/30 bg-gradient-to-br from-slate-800/90 to-purple-900/90 rounded-2xl h-fit mt-5 transition-all shadow-2xl shadow-purple-500/20">
-				<h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent w-full text-center mb-6">
-					SignUp ChatApp
-				</h2>
-				<form className="w-full flex justify-between flex-col">
-					<h3 className="text-lg font-semibold p-2 text-blue-300">
-						Enter First Name
-					</h3>
-					<input
-						className="w-full border border-purple-500/30 my-3 py-4 px-8 rounded-full flex justify-between bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-						type="text"
-						placeholder="Enter First Name"
-						name="firstName"
-						value={firstName}
-						onChange={(e) => setFirstName(e.target.value)}
-						required
-					/>
-					<h3 className="text-lg font-semibold p-2 text-blue-300">
-						Enter Last Name
-					</h3>
-					<input
-						className="w-full border border-purple-500/30 my-3 py-4 px-8 rounded-full flex justify-between bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-						type="text"
-						placeholder="Enter Last Name"
-						name="lastName"
-						value={lastName}
-						onChange={(e) => setLastName(e.target.value)}
-						required
-					/>
-					<h3 className="text-lg font-semibold p-2 text-blue-300">
-						Enter Email Address
-					</h3>
-					<input
-						className="w-full border border-purple-500/30 my-3 py-4 px-8 rounded-full flex justify-between bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-						type="email"
-						placeholder="Enter Email Address"
-						name="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						required
-					/>
-					<h3 className="text-lg font-semibold p-2 text-blue-300">
-						Enter Password
-					</h3>
-					<div className="relative">
-						<input
-							className="w-full border border-purple-500/30 my-3 py-4 px-8 rounded-full flex justify-between bg-white/90 text-black focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-							type={isShow ? "text" : "password"}
-							placeholder="Enter Password"
-							name="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
-						<span
-							onClick={() => setIsShow(!isShow)}
-							className="cursor-pointer text-purple-600 hover:text-purple-700 absolute right-5 top-8 transition-colors"
-						>
-							{isShow ? (
-								<PiEyeClosedLight fontSize={22} />
-							) : (
-								<PiEye fontSize={22} />
-							)}
-						</span>
+		<div className="relative flex flex-col items-center justify-center py-12 min-h-[90vh] overflow-hidden bg-gradient-to-b from-slate-900 via-[#0B1120] to-[#0B1120]">
+			{/* Animated Background Elements */}
+			<div className="absolute top-[0%] right-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-600/10 blur-[120px] mix-blend-screen pointer-events-none"></div>
+			<div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[120px] mix-blend-screen pointer-events-none"></div>
+			
+			<div className="z-10 w-[90%] sm:w-[70%] md:w-[60%] lg:w-[40%] max-w-[550px] border border-slate-700/50 bg-[#0F172A]/80 backdrop-blur-2xl rounded-[2rem] shadow-[0_0_50px_rgba(6,182,212,0.15)] p-8 sm:p-10 transition-all duration-300">
+				
+				<div className="flex flex-col items-center mb-8">
+					<div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center mb-6 transform hover:scale-110 hover:-rotate-3 transition-all duration-300">
+						<FaComments className="text-white text-3xl drop-shadow-md" />
 					</div>
+					<h2 className="text-[1.75rem] font-black text-white tracking-tight drop-shadow-sm">
+						Create Account
+					</h2>
+					<p className="text-slate-400 mt-2 text-sm font-medium">
+						ChatApp mein naya account banayein
+					</p>
+				</div>
+
+				<form className="w-full flex flex-col gap-5">
+					<div className="grid grid-cols-2 gap-4">
+						<div className="flex flex-col gap-2">
+							<label className="text-[11px] font-bold tracking-widest text-cyan-400 uppercase drop-shadow-sm">
+								First Name
+							</label>
+							<input
+								className="w-full bg-[#0B1120]/80 border border-slate-700/70 text-slate-200 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/80 transition-all placeholder-slate-600 font-medium"
+								type="text"
+								placeholder="First Name"
+								name="firstName"
+								value={firstName}
+								onChange={(e) => setFirstName(e.target.value)}
+								required
+							/>
+						</div>
+						<div className="flex flex-col gap-2">
+							<label className="text-[11px] font-bold tracking-widest text-cyan-400 uppercase drop-shadow-sm">
+								Last Name
+							</label>
+							<input
+								className="w-full bg-[#0B1120]/80 border border-slate-700/70 text-slate-200 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/80 transition-all placeholder-slate-600 font-medium"
+								type="text"
+								placeholder="Last Name"
+								name="lastName"
+								value={lastName}
+								onChange={(e) => setLastName(e.target.value)}
+								required
+							/>
+						</div>
+					</div>
+
+					<div className="flex flex-col gap-2">
+						<label className="text-[11px] font-bold tracking-widest text-cyan-400 uppercase drop-shadow-sm">
+							Email Address
+						</label>
+						<input
+							className="w-full bg-[#0B1120]/80 border border-slate-700/70 text-slate-200 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/80 transition-all placeholder-slate-600 font-medium"
+							type="email"
+							placeholder="p@example.com"
+							name="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							required
+						/>
+					</div>
+
+					<div className="flex flex-col gap-2">
+						<label className="text-[11px] font-bold tracking-widest text-cyan-400 uppercase drop-shadow-sm">
+							Password
+						</label>
+						<div className="relative group">
+							<input
+								className="w-full bg-[#0B1120]/80 border border-slate-700/70 text-slate-200 px-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/80 transition-all placeholder-slate-600 font-medium tracking-widest"
+								type={isShow ? "text" : "password"}
+								placeholder="••••••••"
+								name="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+							/>
+							<span
+								onClick={() => setIsShow(!isShow)}
+								className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-cyan-400 transition-colors p-1"
+							>
+								{isShow ? (
+									<PiEyeClosedLight fontSize={20} />
+								) : (
+									<PiEye fontSize={20} />
+								)}
+							</span>
+						</div>
+					</div>
+
 					<button
 						onClick={(e) => {
-							handleSignup(e);
 							e.preventDefault();
+							handleSignup(e);
 						}}
-						className="disabled:opacity-50 disabled:cursor-not-allowed w-full font-semibold hover:from-purple-700 hover:to-blue-700 rounded-full px-5 py-4 mt-5 text-lg border border-purple-500/30 text-white bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/50"
+						disabled={load !== ""}
+						className="group relative w-full flex justify-center items-center py-3.5 px-4 mt-2 rounded-xl text-[15px] font-bold text-white bg-gradient-to-r from-[#0E7490] to-[#1D4ED8] hover:from-[#06B6D4] hover:to-[#2563EB] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0F172A] focus:ring-cyan-500 transition-all shadow-[0_0_20px_rgba(8,145,178,0.3)] disabled:opacity-70 hover:shadow-[0_0_25px_rgba(8,145,178,0.5)] active:scale-[0.98]"
 					>
-						{load == "" ? "SignUp" : load}
+						{load === "" ? (
+							<span className="flex items-center gap-2">
+								Sign Up <span className="group-hover:translate-x-1.5 transition-transform duration-300 ease-out">→</span>
+							</span>
+						) : (
+							load
+						)}
 					</button>
-					<div className="w-full flex items-center my-4">
-						<div className="w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
-						<Link to="/signin">
-							<div className="p-3 font-semibold text-md hover:text-purple-300 transition-colors">
-								SignIn
-							</div>
-						</Link>
-						<div className="w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
+
+					<div className="relative my-4">
+						<div className="absolute inset-0 flex items-center">
+							<div className="w-full border-t border-slate-700/60"></div>
+						</div>
+						<div className="relative flex justify-center text-sm">
+							<span className="px-4 bg-[#0F172A] text-slate-500 text-[11px] font-semibold tracking-wide">
+								ya jaari rakhein
+							</span>
+						</div>
 					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<button
+							type="button"
+							onClick={() => handleSocialLogin('Google')}
+							className="flex items-center justify-center gap-2.5 w-full px-4 py-2.5 border border-slate-700/60 rounded-xl text-sm font-medium text-slate-300 bg-slate-800/30 hover:bg-slate-700/80 hover:text-white hover:border-slate-600 transition-all active:scale-[0.98]"
+						>
+							<FaGoogle className="text-[#EA4335]" />
+							<span>Google</span>
+						</button>
+						<button
+							type="button"
+							onClick={() => handleSocialLogin('GitHub')}
+							className="flex items-center justify-center gap-2.5 w-full px-4 py-2.5 border border-slate-700/60 rounded-xl text-sm font-medium text-slate-300 bg-slate-800/30 hover:bg-slate-700/80 hover:text-white hover:border-slate-600 transition-all active:scale-[0.98]"
+						>
+							<FaGithub className="text-white" />
+							<span>GitHub</span>
+						</button>
+					</div>
+
+					<p className="mt-4 text-center text-sm text-slate-400">
+						Pehle se account hai?{" "}
+						<Link to="/signin" className="font-semibold text-cyan-500 hover:text-cyan-400 hover:underline transition-all">
+							Sign In karein
+						</Link>
+					</p>
 				</form>
 			</div>
 		</div>
