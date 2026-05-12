@@ -1,0 +1,282 @@
+# Chat Backend
+
+A robust Node.js backend for real-time chat application with Socket.IO, JWT authentication, and MongoDB integration.
+
+## 🚀 Features
+
+### Core Functionality
+- **Real-time Messaging** - Socket.IO WebSocket server
+- **User Authentication** - JWT-based secure authentication
+- **Chat Management** - Individual and group chat support
+- **Message Handling** - Persistent message storage
+- **User Management** - User profiles and search
+- **API Security** - CORS and authorization middleware
+
+### Technical Features
+- **RESTful APIs** - Clean API endpoints
+- **Real-time Events** - Socket.IO event handling
+- **Database Integration** - MongoDB with Mongoose
+- **Password Security** - bcryptjs encryption
+- **Environment Configuration** - Secure env variable management
+
+## 🛠️ Technology Stack
+
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web framework
+- **Socket.IO** - Real-time WebSocket server
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB ODM
+- **JWT** - Authentication tokens
+- **bcryptjs** - Password hashing
+- **CORS** - Cross-origin resource sharing
+
+## 📡 API Endpoints
+
+### Authentication
+```
+POST /api/auth/signup    - User registration
+POST /api/auth/signin    - User login
+```
+
+### Users
+```
+GET  /api/user/profile   - Get user profile
+GET  /api/user/users     - Get all users
+```
+
+### Chats
+```
+GET    /api/chat           - Get user's chats
+POST   /api/chat           - Create individual chat
+POST   /api/chat/group     - Create group chat
+POST   /api/chat/rename    - Rename group
+POST   /api/chat/groupadd  - Add user to group
+POST   /api/chat/groupremove - Remove from group
+DELETE /api/chat/deleteGroup/:chatId - Delete group
+```
+
+### Messages
+```
+POST   /api/message        - Send message
+GET    /api/message/:chatId - Get chat messages
+DELETE /api/message/:chatId - Clear chat
+```
+
+## 🔧 Environment Variables
+
+Create `.env` file in root directory:
+
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/chat-app
+PORT=9000
+JWT_SECRET=your-secret-key
+FRONTEND_URL=http://localhost:5173
+```
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account
+
+### Installation
+
+1. **Clone repository**
+```bash
+git clone https://github.com/satish938-web/chat-backend.git
+cd chat-backend
+```
+
+2. **Install dependencies**
+```bash
+npm install
+```
+
+3. **Environment setup**
+```bash
+cp .env.example .env
+# Edit .env with your credentials
+```
+
+4. **Start server**
+```bash
+npm start
+```
+
+### Development Mode
+```bash
+npm run dev
+```
+
+## 🏗️ Project Structure
+
+```
+backend/
+├── config/
+│   └── jwtProvider.js      # JWT configuration
+├── controllers/
+│   ├── auth.js            # Authentication logic
+│   ├── chat.js            # Chat management
+│   ├── message.js         # Message handling
+│   └── user.js            # User operations
+├── middlewares/
+│   ├── authorization.js   # JWT verification
+│   └── wrapAsync.js       # Error handling
+├── models/
+│   ├── chat.js            # Chat schema
+│   ├── message.js         # Message schema
+│   └── user.js            # User schema
+├── routes/
+│   ├── auth.js            # Auth routes
+│   ├── chat.js            # Chat routes
+│   ├── message.js         # Message routes
+│   └── user.js            # User routes
+├── .env.example           # Environment template
+├── package.json           # Dependencies
+├── server.js              # Main server file
+└── start.bat              # Windows startup script
+```
+
+## 🔐 Security Features
+
+### Authentication
+- **JWT Tokens** - Secure user authentication
+- **Password Hashing** - bcryptjs encryption
+- **Token Validation** - Middleware verification
+- **User Authorization** - Protected routes
+
+### API Security
+- **CORS Configuration** - Cross-origin security
+- **Input Validation** - Request sanitization
+- **Error Handling** - Graceful error responses
+- **Environment Variables** - Secure config
+
+## 🌐 Socket.IO Events
+
+### Connection Events
+- `setup` - User connection setup
+- `disconnect` - User disconnection
+
+### Chat Events
+- `message received` - New message delivery
+- `chat created` - New chat notification
+- `clear chat` - Chat clearing
+- `delete chat` - Chat deletion
+
+### User Events
+- `typing` - Typing indicators
+- `join chat` - Room management
+- `leave chat` - Room exit
+
+## 📊 Database Schema
+
+### User Model
+```javascript
+{
+  firstName: String,
+  lastName: String,
+  email: String (unique),
+  password: String (hashed),
+  image: String (default avatar),
+  timestamps: true
+}
+```
+
+### Chat Model
+```javascript
+{
+  chatName: String,
+  isGroupChat: Boolean,
+  users: [ObjectId],
+  groupAdmin: ObjectId,
+  latestMessage: ObjectId,
+  timestamps: true
+}
+```
+
+### Message Model
+```javascript
+{
+  sender: ObjectId,
+  message: String,
+  chat: ObjectId,
+  timestamps: true
+}
+```
+
+## 🚀 Deployment
+
+### Railway/Heroku
+1. Connect repository to platform
+2. Set environment variables
+3. Deploy automatically
+
+### Vercel (Serverless)
+1. Install Vercel CLI
+2. Run `vercel` command
+3. Configure environment variables
+
+### Docker
+```bash
+docker build -t chat-backend .
+docker run -p 9000:9000 chat-backend
+```
+
+## 🧪 Testing
+
+### API Testing
+```bash
+# Test all endpoints
+node test-apis.js
+```
+
+### Manual Testing
+- Use Postman or Thunder Client
+- Import API collection
+- Test with valid JWT tokens
+
+## 📝 API Response Format
+
+### Success Response
+```json
+{
+  "message": "Success message",
+  "data": { ... }
+}
+```
+
+### Error Response
+```json
+{
+  "message": "Error message"
+}
+```
+
+## 🔄 Error Handling
+
+- **Validation Errors** - 400 status
+- **Authentication Errors** - 401 status
+- **Not Found Errors** - 404 status
+- **Server Errors** - 500 status
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch
+3. Make changes
+4. Test thoroughly
+5. Submit pull request
+
+## 📄 License
+
+MIT License - feel free to use this project for learning or commercial purposes.
+
+## 👨‍💻 Author
+
+**Satish Gupta**
+- Email: satish202627@gmail.com
+- GitHub: @satish938-web
+
+---
+
+**Built with ❤️ for real-time communication**
