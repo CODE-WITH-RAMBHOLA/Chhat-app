@@ -9,7 +9,7 @@ import {
     SimpleDateMonthDay,
     SimpleTime,
 } from "../../utils/formateDateTime";
-import { setAllMessage } from "../../redux/slices/messageSlice";
+import { addAllMessages } from "../../redux/slices/messageSlice";
 
 const AllMessages = ({ allMessage }) => {
     const chatBox = useRef();
@@ -32,7 +32,7 @@ const AllMessages = ({ allMessage }) => {
                 toast.success("Message deleted");
                 // Update local state by filtering out the deleted message
                 const newMessages = allMessage.filter(msg => msg._id !== messageId);
-                dispatch(setAllMessage(newMessages));
+                dispatch(addAllMessages(newMessages));
             } else {
                 toast.error(data.message || "Failed to delete message");
             }
