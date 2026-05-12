@@ -1,17 +1,46 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { VscCheckAll } from "react-icons/vsc";
 import { CgChevronDoubleDown } from "react-icons/cg";
+import { MdDeleteOutline } from "react-icons/md";
+import { toast } from "react-toastify";
 import {
     SimpleDateAndTime,
     SimpleDateMonthDay,
     SimpleTime,
 } from "../../utils/formateDateTime";
+import { setAllMessage } from "../../redux/slices/messageSlice";
 
 const AllMessages = ({ allMessage }) => {
     const chatBox = useRef();
+    const dispatch = useDispatch();
     const adminId = useSelector((store) => store.auth?._id);
     const isTyping = useSelector((store) => store?.condition?.isTyping);
+
+    const handleDeleteMessage = async (messageId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this message?");
+        if (!confirmDelete) return;
+
+        const token = localStorage.getItem("token");
+        try {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/message/${messageId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                toast.success("Message deleted");
+                // Update local state by filtering out the deleted message
+                const newMessages = allMessage.filter(msg => msg._id !== messageId);
+                dispatch(setAllMessage(newMessages));
+            } else {
+                toast.error(data.message || "Failed to delete message");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Error deleting message");
+        }
+    };
 
     const [scrollShow, setScrollShow] = useState(true);
     // Handle Chat Box Scroll Down
@@ -98,9 +127,9 @@ const AllMessages = ({ allMessage }) => {
                                 <div
                                     className={`${
                                         message?.sender?._id === adminId
-                                            ? "bg-gradient-to-tr to-slate-800 from-green-400 rounded-s-lg rounded-ee-2xl"
-                                            : "bg-gradient-to-tr to-slate-800 from-white rounded-e-lg rounded-es-2xl"
-                                    } py-1.5 px-2 min-w-10 text-start flex flex-col relative max-w-[85%]`}
+                                            ? "bg-gradient-to-tr to-blue-600 from-cyan-600 rounded-s-2xl rounded-tr-sm rounded-br-2xl shadow-[0_4px_15px_rgba(6,182,212,0.2)] text-white"
+                                            : "bg-[#1E293B] border border-slate-700/50 rounded-e-2xl rounded-tl-sm rounded-bl-2xl shadow-lg text-slate-200"
+                                    } py-2 px-3 min-w-[80px] text-start flex flex-col relative max-w-[85%] group transition-all`}
                                 >
                                     {message?.chat?.isGroupChat &&
                                         message?.sender?._id !== adminId && (
@@ -115,11 +144,17 @@ const AllMessages = ({ allMessage }) => {
                                                 : "pr-12"
                                         }`}
                                     >
-                                        <span className="">
-                                            {message?.message}
-                                        </span>
+                                        {message?.messageType === "image" ? (
+                                            <img src={message.message} alt="Shared Image" className="max-w-[200px] md:max-w-[250px] rounded-lg mt-1 object-cover cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.open(message.message, '_blank')} />
+                                        ) : message?.messageType === "video" ? (
+                                            <video src={message.message} controls className="max-w-[200px] md:max-w-[250px] rounded-lg mt-1 object-cover" />
+                                        ) : (
+                                            <span className="text-[15px] leading-relaxed break-words block">
+                                                {message?.message}
+                                            </span>
+                                        )}
                                         <span
-                                            className="text-[11px] font-light absolute bottom-1 right-2 flex items-end gap-1.5"
+                                            className="text-[10px] font-medium absolute bottom-1.5 right-2.5 flex items-center gap-1.5 opacity-80"
                                             title={SimpleDateAndTime(
                                                 message?.updatedAt
                                             )}
@@ -128,12 +163,21 @@ const AllMessages = ({ allMessage }) => {
                                             {message?.sender?._id ===
                                                 adminId && (
                                                 <VscCheckAll
-                                                    color="white"
+                                                    color="currentColor"
                                                     fontSize={14}
                                                 />
                                             )}
                                         </span>
                                     </div>
+                                    {message?.sender?._id === adminId && (
+                                        <div 
+                                            className="absolute top-1/2 -translate-y-1/2 -left-8 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-red-400 hover:text-red-500 bg-[#0B1120] p-1.5 rounded-full shadow-lg"
+                                            onClick={() => handleDeleteMessage(message._id)}
+                                            title="Delete message"
+                                        >
+                                            <MdDeleteOutline size={16} />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </Fragment>
