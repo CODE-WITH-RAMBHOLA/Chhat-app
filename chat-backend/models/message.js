@@ -12,6 +12,11 @@ const messageSchema = mongoose.Schema(
 			required: true,
 			trim: true,
 		},
+		messageType: {
+			type: String,
+			enum: ['text', 'image', 'video'],
+			default: 'text'
+		},
 		chat: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Chat",

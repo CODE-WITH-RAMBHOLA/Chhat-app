@@ -2,11 +2,12 @@ const Chat = require("../models/chat");
 const Message = require("../models/message");
 
 const createMessage = async (req, res) => {
-	const { message, chatId } = req.body;
+	const { message, chatId, messageType } = req.body;
 	if (message) {
 		const newMessage = await Message.create({
 			sender: req.user._id,
 			message: message,
+			messageType: messageType || "text",
 			chat: chatId,
 		});
 		const chat = await Chat.findByIdAndUpdate(chatId, {
@@ -31,10 +32,21 @@ const allMessage = async (req, res) => {
 		.populate("chat");
 	return res.status(200).json({ data: messages });
 };
+
 const clearChat = async (req, res) => {
 	const chatId = req.params.chatId;
 	await Message.deleteMany({ chat: chatId });
 	return res.status(200).json({ message: "success" });
 };
 
-module.exports = { createMessage, allMessage, clearChat };
+const deleteMessage = async (req, res) => {
+	const messageId = req.params.messageId;
+	try {
+		await Message.findByIdAndDelete(messageId);
+		return res.status(200).json({ message: "Message deleted successfully", id: messageId });
+	} catch (err) {
+		return res.status(500).json({ message: "Error deleting message" });
+	}
+};
+
+module.exports = { createMessage, allMessage, clearChat, deleteMessage };

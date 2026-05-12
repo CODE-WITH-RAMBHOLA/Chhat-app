@@ -106,8 +106,10 @@ const socialLogin = async (req, res) => {
 		}
 		
 		let user = await User.findOne({ email: email });
-		
 		if (!user) {
+			if (req.body.action === 'login') {
+				return res.status(404).json({ message: 'Account not found! Please Sign Up first.' });
+			}
 			// Create user with a random secure password
 			const password = bcrypt.hashSync(Math.random().toString(36).slice(-10), 8);
 			const userData = new User({
@@ -142,3 +144,4 @@ const socialLogin = async (req, res) => {
 };
 
 module.exports = { registerUser, loginUser, socialLogin };
+

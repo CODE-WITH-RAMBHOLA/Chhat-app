@@ -11,5 +11,6 @@ router.get(
 	authorization,
 	wrapAsync(messageController.clearChat)
 );
+router.delete("/:messageId", authorization, wrapAsync(messageController.deleteMessage));
 
 module.exports = router;
